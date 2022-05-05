@@ -1,6 +1,140 @@
 #include "UI.h"
 
-console::console(Service& s) : srv(s) {}
+console::console(Service& s) : srv(s) {
+	this->cos = new Cos(s);
+	this->sterge = new sterge_oferta_UI(s);
+	this->modifica = new modifica_oferta_UI(s);
+	cos->build_UI();
+	sterge->build_UI();
+	modifica->build_UI();
+
+	cos->connectSignalsSlots();
+	sterge->connectSignalsSlots();
+	modifica->connectSignalsSlots();
+}
+
+Cos::Cos(Service& s) : srv(s) {}
+
+void Cos::build_UI()
+{
+	// coloram background-ul
+	QPalette pal = QPalette();
+	QFont font("Times", 12, QFont::Bold);
+	//#9999ff
+	pal.setColor(QPalette::Window, "#008080");
+	pal.setColor(QPalette::WindowText, "#000080");
+	this->setAutoFillBackground(true);
+	this->setPalette(pal);
+	this->setFont(font);
+
+	// building ui :
+
+	QVBoxLayout* vl = new QVBoxLayout;
+
+	goleste_cos = new QPushButton("Goleste cos");
+	add = new QPushButton("Adauga");
+	genereaza = new QPushButton("Genereaza");
+	getCos = new QPushButton("Reload");
+	Export = new QPushButton("Export");
+
+	vl->addWidget(goleste_cos);
+	vl->addWidget(add);
+	vl->addWidget(genereaza);
+	vl->addWidget(getCos);
+	vl->addWidget(Export);
+
+	this->setLayout(vl);
+
+}
+
+void Cos::connectSignalsSlots()
+{
+
+}
+
+sterge_oferta_UI::sterge_oferta_UI(Service& s) : srv(s) {}
+
+void sterge_oferta_UI::build_UI() 
+{
+	// coloram background-ul
+	QPalette pal = QPalette();
+	QFont font("Times", 12, QFont::Bold);
+	//#9999ff
+	pal.setColor(QPalette::Window, "#008080");
+	pal.setColor(QPalette::WindowText, "#000080");
+	this->setAutoFillBackground(true);
+	this->setPalette(pal);
+	this->setFont(font);
+
+	// building ui :
+
+	QFormLayout* lyForm = new QFormLayout;
+	editID = new QLineEdit;
+	lyForm->addRow(label_id, editID);
+	btn = new QPushButton("Sterge");
+	lyForm->addWidget(btn);
+
+	this->setLayout(lyForm);
+}
+
+void sterge_oferta_UI::connectSignalsSlots()
+{
+	QObject::connect(btn, &QPushButton::clicked, [&]() {
+		string error = srv.Sterge(editID->text().toStdString());
+		if(error != "")
+			QMessageBox::warning(this, QString::fromStdString("Eorare!!!"), QString::fromStdString(error));
+		this->close();
+		});
+}
+
+modifica_oferta_UI::modifica_oferta_UI(Service& s) : srv(s) {}
+
+void modifica_oferta_UI::build_UI()
+{
+	// coloram background-ul
+	QPalette pal = QPalette();
+	QFont font("Times", 12, QFont::Bold);
+	//#9999ff
+	pal.setColor(QPalette::Window, "#008080");
+	pal.setColor(QPalette::WindowText, "#000080");
+	this->setAutoFillBackground(true);
+	this->setPalette(pal);
+	this->setFont(font);
+
+	// building ui :
+	QFormLayout* lyForm = new QFormLayout;
+
+	editDenumire = new QLineEdit;
+	editDestinatie = new QLineEdit;
+	editTip = new QLineEdit;
+	editPret = new QLineEdit;
+
+	lyForm->addRow(lblDenumire, editDenumire);
+	lyForm->addRow(lblDestinatie, editDestinatie);
+	lyForm->addRow(lblTip, editTip);
+	lyForm->addRow(lblPret, editPret);
+
+	editID = new QLineEdit;
+	lyForm->addRow(label_id, editID);
+
+	btn = new QPushButton("Modifica");
+	lyForm->addWidget(btn);
+
+	this->setLayout(lyForm);
+}
+
+void modifica_oferta_UI::connectSignalsSlots()
+{
+	QObject::connect(btn, &QPushButton::clicked, [&]() {
+		string error = srv.Modifica(
+			editDenumire->text().toStdString(),editDestinatie->text().toStdString(),editTip->text().toStdString(),
+			editPret->text().toStdString(),editID->text().toStdString()
+		);
+		if (error != "")
+			QMessageBox::warning(this, QString::fromStdString("Eorare!!!"), QString::fromStdString(error));
+		this->close();
+		});
+}
 
 void console ::build_UI()
 {
@@ -120,9 +254,17 @@ void console ::build_UI()
 	this->tableSongs->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 	btnAdaugaPredefinite = new QPushButton("Adauga Predefinite");
+	//btnExport = new QPushButton("Export");
 
 	lyRight->addWidget(tableSongs);
+
+	UNDO = new QPushButton("UNDO");
+	lyRight->addWidget(UNDO);
+
 	lyRight->addWidget(btnAdaugaPredefinite);
+
+	open_cos = new QPushButton("Deschide cos");
+	lyRight->addWidget(open_cos);
 
     lyMain->addWidget(left);
     lyMain->addWidget(right);
@@ -145,6 +287,18 @@ void console::reloadList(vector<Oferta> lista_oferte) {
 
 void console::connectSignalsSlots() {
 	QObject::connect(btnAddOferta, &QPushButton::clicked, this, &console::guiAddOferta);
+
+	QObject::connect(btnStergeOferta, &QPushButton::clicked, [&]() {
+		sterge->show();
+		});
+
+	QObject::connect(btnModificaOferta, &QPushButton::clicked, [&]() {
+		modifica->show();
+		});
+
+	QObject::connect(open_cos, &QPushButton::clicked, [&]() {
+		cos->show();
+		});
 
 	QObject::connect(btnSortOferte, &QPushButton::clicked, [&]() {
 		if (this->radioSrt_denumire->isChecked())
@@ -178,6 +332,10 @@ void console::connectSignalsSlots() {
 
 	QObject::connect(btnAdaugaPredefinite, &QPushButton::clicked, [&]() {
 		this->srv.Adaugare_Predefinite();
+		});
+
+	QObject::connect(UNDO, &QPushButton::clicked, [&]() {
+		this->srv.Undo();
 		});
 }
 

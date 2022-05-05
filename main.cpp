@@ -17,7 +17,6 @@
 using namespace std;
 
 void all_tests();
-void start();
 
 int main(int argc, char* argv[])
 {
@@ -43,6 +42,13 @@ int main(int argc, char* argv[])
     return a.exec();
 }
 
+//// teste
+//int main()
+//{
+//    all_tests();
+//    return 0;
+//}
+ 
 void all_tests()
 {
     vector<Oferta> Lista_oferte;
@@ -53,17 +59,3 @@ void all_tests()
     test_service(service);
     tests_validators(valid);
 }
-
-//void start()
-//{
-//    vector<Oferta> Lista_oferte;
-//    Valid valid;
-//    Repo repo(Lista_oferte);
-//    wish_list wish;
-//    Service service(repo, wish, valid);
-//
-//    /// definim UI-ul
-//    console consola(service);
-//    consola.show_UI();
-//    
-//}
