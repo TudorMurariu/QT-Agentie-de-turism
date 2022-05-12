@@ -91,13 +91,15 @@ void Cos::build_UI()
 
 	dreapta->setLayout(vlnew);
 
-	tableOferte = new QTableWidget{ 10,5 };
-	vlnew->addWidget(tableOferte);
+	//tableOferte = new QTableWidget{ 10,5 };
+	//vlnew->addWidget(tableOferte);
 
-	QStringList tblHeaderList;
-	tblHeaderList << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID";
-	this->tableOferte->setHorizontalHeaderLabels(tblHeaderList);
+	//QStringList tblHeaderList;
+	//tblHeaderList << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID";
+	//this->tableOferte->setHorizontalHeaderLabels(tblHeaderList);
 
+	lista_Oferte = new QListWidget;
+	vlnew->addWidget(lista_Oferte);
 
 	mainL->addWidget(stanga);
 	mainL->addWidget(dreapta);
@@ -140,10 +142,31 @@ void Cos::connectSignalsSlots()
 	QObject::connect(Reload, &QPushButton::clicked, [&]() {
 		this->reloadList(srv.get_cos());
 		});
+
+	/*QObject::connect(lista_Oferte, &QListWidget::currentTextChanged, [&]() {
+
+		});*/
 }
 
 void Cos::reloadList(vector<Oferta> lista_oferte) {
-	this->tableOferte->clearContents();
+	this->lista_Oferte->clear();
+
+	QListWidgetItem* item1 = new QListWidgetItem;
+	string text1 = "  Denumire Destinatie Tip Pret ID";
+	item1->setText(QString::fromStdString(text1));
+	this->lista_Oferte->addItem(item1);
+
+	int lineNumber = 0;
+	for (auto& oferta : lista_oferte)
+	{
+		QListWidgetItem* item = new QListWidgetItem;
+		string text = " " + oferta.denumire + " " + oferta.destinatie + " "
+			+ oferta.tip + " " + to_string(oferta.pret) + " " + to_string(oferta.id);
+		item->setText(QString::number(lineNumber) + QString::fromStdString(text));
+		this->lista_Oferte->addItem(item);
+	}
+
+	/*this->tableOferte->clearContents();
 	this->tableOferte->setRowCount(lista_oferte.size());
 
 	int lineNumber = 0;
@@ -154,7 +177,7 @@ void Cos::reloadList(vector<Oferta> lista_oferte) {
 		this->tableOferte->setItem(lineNumber, 3, new QTableWidgetItem(QString::number(oferta.pret)));
 		this->tableOferte->setItem(lineNumber, 4, new QTableWidgetItem(QString::number(oferta.id)));
 		lineNumber++;
-	}
+	}*/
 }
 
 sterge_oferta_UI::sterge_oferta_UI(Service& s) : srv(s) {}
@@ -396,6 +419,21 @@ void console::reloadList(vector<Oferta> lista_oferte) {
 		this->tableOferte->setItem(lineNumber, 4, new QTableWidgetItem(QString::number(oferta.id)));
 		lineNumber++;
 	}
+
+	/*QListWidgetItem* item1 = new QListWidgetItem;
+	string text1 = "  Denumire Destinatie Tip Pret ID";
+	item1->setText(QString::fromStdString(text1));
+	this->lista_Oferte->addItem(item1);
+
+	int lineNumber = 0;
+	for (auto& oferta : lista_oferte)
+	{
+		QListWidgetItem* item = new QListWidgetItem;
+		string text = " " + oferta.denumire + " " + oferta.destinatie + " "
+			+ oferta.tip + " " + to_string(oferta.pret) + " " + to_string(oferta.id);
+		item->setText(QString::number(lineNumber) + QString::fromStdString(text));
+		this->lista_Oferte->addItem(item);
+	}*/
 }
 
 void console::connectSignalsSlots() {
@@ -452,6 +490,10 @@ void console::connectSignalsSlots() {
 	QObject::connect(UNDO, &QPushButton::clicked, [&]() {
 		this->srv.Undo();
 		});
+
+	/*QObject::connect(tableOferte, &QTableWidget::itemPressed, [&]() {
+		
+		}):*/
 }
 
 void console::guiAddOferta()

@@ -15,6 +15,8 @@
 #include <QHeaderView>
 #include <QGroupBox>
 #include <QRadioButton>
+#include <QListWidget>
+#include <QListWidgetItem>
 #include "Service.h"
 
 class Cos : public QWidget {
@@ -43,6 +45,7 @@ private:
 	QLabel* lExport = new QLabel("Nume fisier : ");
 
 	QTableWidget* tableOferte;
+	QListWidget* lista_Oferte;
 
 public:
 	Cos(Service& srv);
@@ -140,6 +143,7 @@ private:
 	QPushButton* btnReloadData;
 
 	QTableWidget* tableOferte;
+	QListWidget* lista_Oferte;
 
 public:
 	console(Service& srv);
