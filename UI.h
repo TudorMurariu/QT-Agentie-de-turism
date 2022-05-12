@@ -28,11 +28,27 @@ private:
 	QPushButton* genereaza;
 	QPushButton* getCos;
 	QPushButton* Export;
+	QPushButton* Reload;
+
+	QGroupBox* groupBox1 = new QGroupBox(tr("ADD"));
+	QGroupBox* groupBox2 = new QGroupBox(tr("Genereaza"));
+	QGroupBox* groupBox3 = new QGroupBox(tr("Export"));
+
+	QLineEdit* editAdd;
+	QLineEdit* editGenereaza;
+	QLineEdit* editExport;
+
+	QLabel* lAdd = new QLabel("Denumire : ");
+	QLabel* lGenereaza = new QLabel("Numarul de elemente : ");
+	QLabel* lExport = new QLabel("Nume fisier : ");
+
+	QTableWidget* tableOferte;
 
 public:
 	Cos(Service& srv);
 	void build_UI();
 	void connectSignalsSlots();
+	void reloadList(vector<Oferta> lista_oferte);
 };
 
 class sterge_oferta_UI : public QWidget {
@@ -108,6 +124,8 @@ private:
 	QPushButton* btnExport;
 
 	QGroupBox* groupBox = new QGroupBox(tr("Tip sortare"));
+	QGroupBox* groupBox2 = new QGroupBox();
+	QGroupBox* groupBox3 = new QGroupBox(tr("Tip filtrare"));
 
 	QRadioButton* radioSrt_denumire = new QRadioButton(QString::fromStdString("denumire"));
 	QRadioButton* radioSrt_destinatie = new QRadioButton(QString::fromStdString("destinatie"));
@@ -121,7 +139,7 @@ private:
 
 	QPushButton* btnReloadData;
 
-	QTableWidget* tableSongs;
+	QTableWidget* tableOferte;
 
 public:
 	console(Service& srv);

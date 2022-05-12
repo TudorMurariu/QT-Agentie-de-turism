@@ -29,27 +29,132 @@ void Cos::build_UI()
 
 	// building ui :
 
+	QHBoxLayout* mainL = new QHBoxLayout;
+
+	QWidget* stanga = new QWidget;
+
 	QVBoxLayout* vl = new QVBoxLayout;
+	stanga->setLayout(vl);
 
 	goleste_cos = new QPushButton("Goleste cos");
 	add = new QPushButton("Adauga");
 	genereaza = new QPushButton("Genereaza");
 	getCos = new QPushButton("Reload");
 	Export = new QPushButton("Export");
+	Reload = new QPushButton("Reload");
+
+	editAdd = new QLineEdit;
+	editGenereaza = new QLineEdit;
+	editExport = new QLineEdit;
 
 	vl->addWidget(goleste_cos);
-	vl->addWidget(add);
-	vl->addWidget(genereaza);
-	vl->addWidget(getCos);
-	vl->addWidget(Export);
 
-	this->setLayout(vl);
+	QVBoxLayout* vl1 = new QVBoxLayout;
+	QHBoxLayout* hl1 = new QHBoxLayout;
+	hl1->addWidget(lAdd);
+	hl1->addWidget(editAdd);
+	QWidget* w1 = new QWidget;
+	w1->setLayout(hl1);
 
+	vl1->addWidget(w1);
+	vl1->addWidget(add);
+	groupBox1->setLayout(vl1);
+	vl->addWidget(groupBox1);
+
+	QVBoxLayout* vl2 = new QVBoxLayout;
+	QHBoxLayout* hl2 = new QHBoxLayout;
+	hl2->addWidget(lGenereaza);
+	hl2->addWidget(editGenereaza);
+	QWidget* w2 = new QWidget;
+	w2->setLayout(hl2);
+
+	vl2->addWidget(w2);
+	vl2->addWidget(genereaza);
+	groupBox2->setLayout(vl2);
+	vl->addWidget(groupBox2);
+
+	QVBoxLayout* vl3 = new QVBoxLayout;
+	QHBoxLayout* hl3 = new QHBoxLayout;
+	hl3->addWidget(lExport);
+	hl3->addWidget(editExport);
+	QWidget* w3 = new QWidget;
+	w3->setLayout(hl3);
+
+	vl3->addWidget(w3);
+	vl3->addWidget(Export);
+	groupBox3->setLayout(vl3);
+	vl->addWidget(groupBox3);
+
+
+	QWidget* dreapta = new QWidget;
+	QVBoxLayout* vlnew = new QVBoxLayout;
+
+	dreapta->setLayout(vlnew);
+
+	tableOferte = new QTableWidget{ 10,5 };
+	vlnew->addWidget(tableOferte);
+
+	QStringList tblHeaderList;
+	tblHeaderList << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID";
+	this->tableOferte->setHorizontalHeaderLabels(tblHeaderList);
+
+
+	mainL->addWidget(stanga);
+	mainL->addWidget(dreapta);
+
+	this->setLayout(mainL);
 }
 
 void Cos::connectSignalsSlots()
 {
+	this->reloadList(srv.get_cos());
+	QObject::connect(goleste_cos, &QPushButton::clicked, [&]() {
+		srv.goleste_cos();
+		this->reloadList(srv.get_cos());
+		});
+	
+	QObject::connect(add, &QPushButton::clicked, [&]() {
+		srv.add_in_wish(editAdd->text().toStdString());
+		this->reloadList(srv.get_cos());
+		});
 
+	QObject::connect(genereaza, &QPushButton::clicked, [&]() {
+		string x = editGenereaza->text().toStdString();
+		Valid validator;
+		if (!validator.is_id(x))
+		{
+			QMessageBox::warning(this, "Eroare", "Textul trebuie sa reprezinte un numar.");
+		}
+		else
+		{
+			srv.genereaza(stoi(x));
+			this->reloadList(srv.get_cos());
+		}
+		});
+
+	QObject::connect(Export, &QPushButton::clicked, [&]() {
+		srv.Export(editExport->text().toStdString());
+		this->reloadList(srv.get_cos());
+		});
+
+	QObject::connect(Reload, &QPushButton::clicked, [&]() {
+		this->reloadList(srv.get_cos());
+		});
+}
+
+void Cos::reloadList(vector<Oferta> lista_oferte) {
+	this->tableOferte->clearContents();
+	this->tableOferte->setRowCount(lista_oferte.size());
+
+	int lineNumber = 0;
+	for (auto& oferta : lista_oferte) {
+		this->tableOferte->setItem(lineNumber, 0, new QTableWidgetItem(QString::fromStdString(oferta.denumire)));
+		this->tableOferte->setItem(lineNumber, 1, new QTableWidgetItem(QString::fromStdString(oferta.destinatie)));
+		this->tableOferte->setItem(lineNumber, 2, new QTableWidgetItem(QString::fromStdString(oferta.tip)));
+		this->tableOferte->setItem(lineNumber, 3, new QTableWidgetItem(QString::number(oferta.pret)));
+		this->tableOferte->setItem(lineNumber, 4, new QTableWidgetItem(QString::number(oferta.id)));
+		lineNumber++;
+	}
 }
 
 sterge_oferta_UI::sterge_oferta_UI(Service& s) : srv(s) {}
@@ -164,9 +269,9 @@ void console ::build_UI()
     left->setLayout(lyLeft);
 
     // partea dreapta
-    QWidget* form = new QWidget;
+    //QWidget* form = new QWidget;
     QFormLayout* lyForm = new QFormLayout;
-    form->setLayout(lyForm);
+	groupBox2->setLayout(lyForm);
     editDenumire = new QLineEdit;
     editDestinatie = new QLineEdit;
     editTip = new QLineEdit;
@@ -191,7 +296,7 @@ void console ::build_UI()
 
     //adaugam toate componentele legate de adaugare melodie
     //in layout-ul care corespunde partii din stanga a ferestrei
-    lyLeft->addWidget(form);
+    lyLeft->addWidget(groupBox2);
 
 
 	//cream un GroupBox pentru radiobuttons care corespund 
@@ -211,7 +316,15 @@ void console ::build_UI()
 	//dupa componentele pentru adaugare in layout-ul vertical
 	lyLeft->addWidget(groupBox);
 
+	// intr- un groupBox
 	//cream un form pentru filtrarea dupa gen 
+	QVBoxLayout* layer_groupBox3 = new QVBoxLayout;
+	QWidget* w_groupBox3 = new QWidget;
+
+	groupBox3->setLayout(layer_groupBox3);
+	layer_groupBox3->addWidget(w_groupBox3);
+	lyLeft->addWidget(groupBox3);
+
 	QWidget* formFilter = new QWidget;
 	QFormLayout* lyFormFilter = new QFormLayout;
 	formFilter->setLayout(lyFormFilter);
@@ -220,14 +333,14 @@ void console ::build_UI()
 	btnFilterOferte1 = new QPushButton("Filtreaza oferte dupa destinatie");
 	btnFilterOferte2 = new QPushButton("Filtreaza oferte dupa pret");
 
-	lyLeft->addWidget(formFilter);
+	layer_groupBox3->addWidget(formFilter);
 	QWidget* filter_btns = new QWidget;
 	QHBoxLayout* hl_filter = new QHBoxLayout;
 	filter_btns->setLayout(hl_filter);
 	hl_filter->addWidget(btnFilterOferte1);
 	hl_filter->addWidget(btnFilterOferte2);
 
-	lyLeft->addWidget(filter_btns);
+	layer_groupBox3->addWidget(filter_btns);
 	//lyLeft->addStretch();
 
 	//Buton folosit pentru a reincarca datele
@@ -243,20 +356,20 @@ void console ::build_UI()
 
 	int noLines = 10;
 	int noColumns = 5;
-	this->tableSongs = new QTableWidget{ noLines, noColumns }; 
+	this->tableOferte = new QTableWidget{ noLines, noColumns }; 
 
 	//setam header-ul tabelului
 	QStringList tblHeaderList;
 	tblHeaderList << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID";
-	this->tableSongs->setHorizontalHeaderLabels(tblHeaderList);
+	this->tableOferte->setHorizontalHeaderLabels(tblHeaderList);
 
 	//optiune pentru a se redimensiona celulele din tabel in functie de continut
-	this->tableSongs->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	this->tableOferte->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 	btnAdaugaPredefinite = new QPushButton("Adauga Predefinite");
 	//btnExport = new QPushButton("Export");
 
-	lyRight->addWidget(tableSongs);
+	lyRight->addWidget(tableOferte);
 
 	UNDO = new QPushButton("UNDO");
 	lyRight->addWidget(UNDO);
@@ -271,16 +384,16 @@ void console ::build_UI()
 }
 
 void console::reloadList(vector<Oferta> lista_oferte) {
-	this->tableSongs->clearContents();
-	this->tableSongs->setRowCount(lista_oferte.size());
+	this->tableOferte->clearContents();
+	this->tableOferte->setRowCount(lista_oferte.size());
 
 	int lineNumber = 0;
 	for (auto& oferta : lista_oferte) {
-		this->tableSongs->setItem(lineNumber, 0, new QTableWidgetItem(QString::fromStdString(oferta.denumire)));
-		this->tableSongs->setItem(lineNumber, 1, new QTableWidgetItem(QString::fromStdString(oferta.destinatie)));
-		this->tableSongs->setItem(lineNumber, 2, new QTableWidgetItem(QString::fromStdString(oferta.tip)));
-		this->tableSongs->setItem(lineNumber, 3, new QTableWidgetItem(QString::number(oferta.pret)));
-		this->tableSongs->setItem(lineNumber, 4, new QTableWidgetItem(QString::number(oferta.id)));
+		this->tableOferte->setItem(lineNumber, 0, new QTableWidgetItem(QString::fromStdString(oferta.denumire)));
+		this->tableOferte->setItem(lineNumber, 1, new QTableWidgetItem(QString::fromStdString(oferta.destinatie)));
+		this->tableOferte->setItem(lineNumber, 2, new QTableWidgetItem(QString::fromStdString(oferta.tip)));
+		this->tableOferte->setItem(lineNumber, 3, new QTableWidgetItem(QString::number(oferta.pret)));
+		this->tableOferte->setItem(lineNumber, 4, new QTableWidgetItem(QString::number(oferta.id)));
 		lineNumber++;
 	}
 }
@@ -294,6 +407,7 @@ void console::connectSignalsSlots() {
 
 	QObject::connect(btnModificaOferta, &QPushButton::clicked, [&]() {
 		modifica->show();
+		this->reloadList(srv.get_list());
 		});
 
 	QObject::connect(open_cos, &QPushButton::clicked, [&]() {
@@ -332,6 +446,7 @@ void console::connectSignalsSlots() {
 
 	QObject::connect(btnAdaugaPredefinite, &QPushButton::clicked, [&]() {
 		this->srv.Adaugare_Predefinite();
+		this->reloadList(srv.get_list());
 		});
 
 	QObject::connect(UNDO, &QPushButton::clicked, [&]() {
@@ -349,4 +464,5 @@ void console::guiAddOferta()
 	string error = srv.Adauga(denumire, destinatie, tip, pret);
 	if (error != "") // daca apare eroare
 		QMessageBox::warning(this, QString::fromStdString("Eorare!!!"), QString::fromStdString(error));
+	this->reloadList(srv.get_list());
 }
