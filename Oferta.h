@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <assert.h>
+#include <time.h>
 
 #include <vector>
 using namespace std;

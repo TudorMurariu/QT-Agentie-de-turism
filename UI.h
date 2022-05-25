@@ -20,6 +20,7 @@
 #include <qwindow.h>
 #include "Service.h"
 #include "oberver.h"
+#include <qpainter.h>
 
 class CosReadOnlyGUI;
 
@@ -67,7 +68,7 @@ class CosReadOnlyGUI : public QWidget , public Observer {
 public:
 	CosReadOnlyGUI(Cos* c) : cos(c) 
 	{
-		this->build_UI();
+		//this->build_UI();
 		cos->addObserver(this);
 	}
 	void build_UI()
@@ -78,7 +79,8 @@ public:
 		this->setLayout(mainly);
 	}
 	void update() override {
-		this->reloadList();
+		//this->reloadList();
+		this->repaint();
 	}
 	void reloadList()
 	{
@@ -88,6 +90,40 @@ public:
 			lista_Oferte->addItem(QString::fromStdString(elem.denumire));
 		}
 	}
+
+	void paintEvent(QPaintEvent* ev) override
+	{
+		QPainter p(this);
+
+		p.drawImage(0, 0, QImage("floare.jpg"));
+		srand(time(0));
+
+		int x = -20;
+		for (auto elem : cos->srv.get_cos())
+		{
+			x += 40;
+			int forma = rand()%4;
+			int inaltime = rand()%130;
+			int start_y = rand()%60;
+
+			switch (forma)
+			{
+			case 0: // dreptunghi
+				p.drawRect(x, start_y, 20, inaltime);
+				break;
+			case 1: // elipsa
+				p.drawEllipse(x, start_y, 20, inaltime);
+				break;
+			case 2: // dreptunghi colorat
+				p.fillRect(x, start_y, 20, inaltime, Qt::red);
+				break;
+			default: // dreptunghi colorat
+				p.fillRect(x, start_y, 20, inaltime, Qt::red);
+				break;
+			}
+		}
+	}
+
 	~CosReadOnlyGUI()
 	{
 		cos->removeObserver(this);
