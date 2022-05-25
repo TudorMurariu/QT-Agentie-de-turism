@@ -2,13 +2,13 @@
 
 console::console(Service& s) : srv(s) {
 	this->cos = new Cos(s);
-	this->cosROnly = new CosReadOnlyGUI(this->cos);
+	//this->cosROnly = new CosReadOnlyGUI(this->cos);
 	this->sterge = new sterge_oferta_UI(s);
 	this->modifica = new modifica_oferta_UI(s);
 	cos->build_UI();
 	sterge->build_UI();
 	modifica->build_UI();
-	cosROnly->show();
+	//cosROnly->show();
 
 	cos->connectSignalsSlots();
 	sterge->connectSignalsSlots();
@@ -411,6 +411,9 @@ void console ::build_UI()
 	open_cos = new QPushButton("Deschide cos");
 	lyRight->addWidget(open_cos);
 
+	open_read_only_cos = new QPushButton("Deschide desene");
+	lyRight->addWidget(open_read_only_cos);
+
     lyMain->addWidget(left);
     lyMain->addWidget(right);
 }
@@ -458,7 +461,22 @@ void console::connectSignalsSlots() {
 		});
 
 	QObject::connect(open_cos, &QPushButton::clicked, [&]() {
-		cos->show();
+		if (cos->isActiveWindow())
+		{
+			Cos* cos_nou = new Cos(srv);
+			cos_nou->build_UI();
+			cos_nou->connectSignalsSlots();
+			cos_nou->show();
+		}
+		else
+		{
+			cos->show();
+		}
+		});
+
+	QObject::connect(open_read_only_cos, &QPushButton::clicked, [&]() {
+		CosReadOnlyGUI* cosROnly = new CosReadOnlyGUI(cos);
+		cosROnly->show();
 		});
 
 	QObject::connect(btnSortOferte, &QPushButton::clicked, [&]() {

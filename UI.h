@@ -105,6 +105,44 @@ public:
 			int forma = rand()%4;
 			int inaltime = rand()%130;
 			int start_y = rand()%60;
+			QColor color;
+
+			int color_num = rand() % 10;
+			switch (color_num)
+			{
+			case 0:
+				color = Qt::red;
+				break;
+			case 1:
+				color = Qt::green;
+				break;
+			case 2:
+				color = Qt::black;
+				break;
+			case 3:
+				color = Qt::blue;
+				break;
+			case 4:
+				color = Qt::lightGray;
+				break;
+			case 5:
+				color = Qt::yellow;
+				break;
+			case 6:
+				color = Qt::cyan;
+				break;
+			case 7:
+				color = Qt::magenta;
+				break;
+			case 8:
+				color = Qt::darkGreen;
+				break;
+			case 9:
+				color = Qt::darkBlue;
+				break;
+			default:
+				break;
+			}
 
 			switch (forma)
 			{
@@ -115,10 +153,10 @@ public:
 				p.drawEllipse(x, start_y, 20, inaltime);
 				break;
 			case 2: // dreptunghi colorat
-				p.fillRect(x, start_y, 20, inaltime, Qt::red);
+				p.fillRect(x, start_y, 20, inaltime, color);
 				break;
 			default: // dreptunghi colorat
-				p.fillRect(x, start_y, 20, inaltime, Qt::red);
+				p.fillRect(x, start_y, 20, inaltime, color);
 				break;
 			}
 		}
@@ -178,11 +216,12 @@ private:
 	// variabilele pentru ui :
 
 	Cos* cos;
-	CosReadOnlyGUI* cosROnly;
+	//CosReadOnlyGUI* cosROnly;
 	sterge_oferta_UI* sterge;
 	modifica_oferta_UI* modifica;
 
 	QPushButton* open_cos;
+	QPushButton* open_read_only_cos;
 	QPushButton* UNDO;
 
 	QLabel* lblDenumire = new QLabel{ "Denumirea ofertei:" };
