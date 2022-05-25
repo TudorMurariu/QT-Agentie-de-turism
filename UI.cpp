@@ -461,17 +461,14 @@ void console::connectSignalsSlots() {
 		});
 
 	QObject::connect(open_cos, &QPushButton::clicked, [&]() {
-		if (cos->isActiveWindow())
-		{
-			Cos* cos_nou = new Cos(srv);
-			cos_nou->build_UI();
-			cos_nou->connectSignalsSlots();
-			cos_nou->show();
-		}
-		else
-		{
-			cos->show();
-		}
+		
+		cos->show();
+
+		Cos* cos_nou = new Cos(srv);
+		cos_nou->build_UI();
+		cos_nou->connectSignalsSlots();
+		cos_nou->show();
+		cos->addObserver(cos_nou);
 		});
 
 	QObject::connect(open_read_only_cos, &QPushButton::clicked, [&]() {

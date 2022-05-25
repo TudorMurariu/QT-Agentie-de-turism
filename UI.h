@@ -24,7 +24,7 @@
 
 class CosReadOnlyGUI;
 
-class Cos : public QWidget , public Observable {
+class Cos : public QWidget , public Observable , Observer {
 	friend class Service;
 	friend class console;
 	friend class CosReadOnlyGUI;
@@ -58,6 +58,9 @@ public:
 	void build_UI();
 	void connectSignalsSlots();
 	void reloadList(vector<Oferta> lista_oferte);
+	void update() override {
+		reloadList(srv.get_cos());
+	}
 };
 
 class CosReadOnlyGUI : public QWidget , public Observer {
