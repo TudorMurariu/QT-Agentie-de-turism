@@ -17,11 +17,16 @@
 #include <QRadioButton>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <qwindow.h>
 #include "Service.h"
+#include "oberver.h"
 
-class Cos : public QWidget {
+class CosReadOnlyGUI;
+
+class Cos : public QWidget , public Observable {
 	friend class Service;
 	friend class console;
+	friend class CosReadOnlyGUI;
 private:
 	Service& srv;
 
@@ -52,6 +57,41 @@ public:
 	void build_UI();
 	void connectSignalsSlots();
 	void reloadList(vector<Oferta> lista_oferte);
+};
+
+class CosReadOnlyGUI : public QWidget , public Observer {
+	friend class Cos;
+	Cos* cos;
+
+	QListWidget* lista_Oferte;
+public:
+	CosReadOnlyGUI(Cos* c) : cos(c) 
+	{
+		this->build_UI();
+		cos->addObserver(this);
+	}
+	void build_UI()
+	{
+		lista_Oferte = new QListWidget();
+		QHBoxLayout* mainly = new QHBoxLayout;
+		mainly->addWidget(lista_Oferte);
+		this->setLayout(mainly);
+	}
+	void update() override {
+		this->reloadList();
+	}
+	void reloadList()
+	{
+		lista_Oferte->clear();
+		for (auto elem : cos->srv.get_cos())
+		{
+			lista_Oferte->addItem(QString::fromStdString(elem.denumire));
+		}
+	}
+	~CosReadOnlyGUI()
+	{
+		cos->removeObserver(this);
+	}
 };
 
 class sterge_oferta_UI : public QWidget {
@@ -102,6 +142,7 @@ private:
 	// variabilele pentru ui :
 
 	Cos* cos;
+	CosReadOnlyGUI* cosROnly;
 	sterge_oferta_UI* sterge;
 	modifica_oferta_UI* modifica;
 

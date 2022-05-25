@@ -2,18 +2,23 @@
 
 console::console(Service& s) : srv(s) {
 	this->cos = new Cos(s);
+	this->cosROnly = new CosReadOnlyGUI(this->cos);
 	this->sterge = new sterge_oferta_UI(s);
 	this->modifica = new modifica_oferta_UI(s);
 	cos->build_UI();
 	sterge->build_UI();
 	modifica->build_UI();
+	cosROnly->show();
 
 	cos->connectSignalsSlots();
 	sterge->connectSignalsSlots();
 	modifica->connectSignalsSlots();
 }
 
-Cos::Cos(Service& s) : srv(s) {}
+Cos::Cos(Service& s) : srv(s) 
+{
+
+}
 
 void Cos::build_UI()
 {
@@ -113,11 +118,13 @@ void Cos::connectSignalsSlots()
 	QObject::connect(goleste_cos, &QPushButton::clicked, [&]() {
 		srv.goleste_cos();
 		this->reloadList(srv.get_cos());
+		this->notify();
 		});
 	
 	QObject::connect(add, &QPushButton::clicked, [&]() {
 		srv.add_in_wish(editAdd->text().toStdString());
 		this->reloadList(srv.get_cos());
+		this->notify();
 		});
 
 	QObject::connect(genereaza, &QPushButton::clicked, [&]() {
@@ -131,6 +138,7 @@ void Cos::connectSignalsSlots()
 		{
 			srv.genereaza(stoi(x));
 			this->reloadList(srv.get_cos());
+			this->notify();
 		}
 		});
 
@@ -149,6 +157,7 @@ void Cos::connectSignalsSlots()
 }
 
 void Cos::reloadList(vector<Oferta> lista_oferte) {
+	this->notify();
 	this->lista_Oferte->clear();
 
 	QListWidgetItem* item1 = new QListWidgetItem;
@@ -491,9 +500,14 @@ void console::connectSignalsSlots() {
 		this->srv.Undo();
 		});
 
-	/*QObject::connect(tableOferte, &QTableWidget::itemPressed, [&]() {
-		
-		}):*/
+	QObject::connect(tableOferte, &QTableWidget::itemPressed, [&]() {
+		int r = tableOferte->currentRow();
+
+		editDenumire->setText(tableOferte->item(r, 0)->text());
+		editDestinatie->setText(tableOferte->item(r, 1)->text());
+		editTip->setText(tableOferte->item(r, 2)->text());
+		editPret->setText(tableOferte->item(r, 3)->text());
+		});
 }
 
 void console::guiAddOferta()

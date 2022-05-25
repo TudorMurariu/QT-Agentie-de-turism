@@ -98,6 +98,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="oberver.h" />
     <ClInclude Include="Oferta.h" />
     <ClInclude Include="Repo.h" />
     <ClInclude Include="Service.h" />
