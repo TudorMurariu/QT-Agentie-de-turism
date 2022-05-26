@@ -461,7 +461,6 @@ void console::connectSignalsSlots() {
 		});
 
 	QObject::connect(open_cos, &QPushButton::clicked, [&]() {
-		
 		cos->show();
 
 		Cos* cos_nou = new Cos(srv);
