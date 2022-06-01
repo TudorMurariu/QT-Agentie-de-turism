@@ -21,6 +21,7 @@
 #include "Service.h"
 #include "oberver.h"
 #include <qpainter.h>
+#include "ViewStuff.h"
 
 class CosReadOnlyGUI;
 
@@ -50,8 +51,10 @@ private:
 	QLabel* lGenereaza = new QLabel("Numarul de elemente : ");
 	QLabel* lExport = new QLabel("Nume fisier : ");
 
-	QTableWidget* tableOferte;
+	//QTableWidget* tableOferte;
 	QListWidget* lista_Oferte;
+	//QListView* lstV;
+	//QTableView* tblV = new QTableView;
 
 public:
 	Cos(Service& srv);
@@ -261,8 +264,10 @@ private:
 
 	QPushButton* btnReloadData;
 
-	QTableWidget* tableOferte;
-	QListWidget* lista_Oferte;
+	//QTableWidget* tableOferte;
+	//QListWidget* lista_Oferte;
+	QTableView* tblV = new QTableView;
+	MyTableModel* model;
 
 public:
 	console(Service& srv);

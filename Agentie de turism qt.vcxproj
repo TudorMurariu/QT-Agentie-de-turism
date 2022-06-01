@@ -104,6 +104,7 @@
     <ClInclude Include="Service.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Validators.h" />
+    <ClInclude Include="ViewStuff.h" />
     <ClInclude Include="wishlist_Repo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

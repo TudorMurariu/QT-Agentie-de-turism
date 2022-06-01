@@ -1,10 +1,10 @@
 #include "Agentiedeturismqt.h"
+#include "Oferta.h"
 #include "UI.h"
 
 #include <iostream>
 #include <string>
 
-#include "Oferta.h"
 #include "Service.h"
 #include "Repo.h"
 #include "Validators.h"
@@ -41,13 +41,6 @@ int main(int argc, char* argv[])
 
     return a.exec();
 }
-
-//// teste
-//int main()
-//{
-//    all_tests();
-//    return 0;
-//}
  
 void all_tests()
 {

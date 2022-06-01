@@ -5,6 +5,8 @@ console::console(Service& s) : srv(s) {
 	//this->cosROnly = new CosReadOnlyGUI(this->cos);
 	this->sterge = new sterge_oferta_UI(s);
 	this->modifica = new modifica_oferta_UI(s);
+	model = new MyTableModel(srv.get_list());
+	tblV->setModel(model);
 	cos->build_UI();
 	sterge->build_UI();
 	modifica->build_UI();
@@ -388,20 +390,21 @@ void console ::build_UI()
 
 	int noLines = 10;
 	int noColumns = 5;
-	this->tableOferte = new QTableWidget{ noLines, noColumns }; 
+	//this->tableOferte = new QTableWidget{ noLines, noColumns }; 
 
 	//setam header-ul tabelului
 	QStringList tblHeaderList;
 	tblHeaderList << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID";
-	this->tableOferte->setHorizontalHeaderLabels(tblHeaderList);
+	//this->tableOferte->setHorizontalHeaderLabels(tblHeaderList);
 
 	//optiune pentru a se redimensiona celulele din tabel in functie de continut
-	this->tableOferte->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	//this->tableOferte->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 	btnAdaugaPredefinite = new QPushButton("Adauga Predefinite");
 	//btnExport = new QPushButton("Export");
-
-	lyRight->addWidget(tableOferte);
+	
+	//lyRight->addWidget(tableOferte);
+	lyRight->addWidget(tblV);
 
 	UNDO = new QPushButton("UNDO");
 	lyRight->addWidget(UNDO);
@@ -419,33 +422,7 @@ void console ::build_UI()
 }
 
 void console::reloadList(vector<Oferta> lista_oferte) {
-	this->tableOferte->clearContents();
-	this->tableOferte->setRowCount(lista_oferte.size());
-
-	int lineNumber = 0;
-	for (auto& oferta : lista_oferte) {
-		this->tableOferte->setItem(lineNumber, 0, new QTableWidgetItem(QString::fromStdString(oferta.denumire)));
-		this->tableOferte->setItem(lineNumber, 1, new QTableWidgetItem(QString::fromStdString(oferta.destinatie)));
-		this->tableOferte->setItem(lineNumber, 2, new QTableWidgetItem(QString::fromStdString(oferta.tip)));
-		this->tableOferte->setItem(lineNumber, 3, new QTableWidgetItem(QString::number(oferta.pret)));
-		this->tableOferte->setItem(lineNumber, 4, new QTableWidgetItem(QString::number(oferta.id)));
-		lineNumber++;
-	}
-
-	/*QListWidgetItem* item1 = new QListWidgetItem;
-	string text1 = "  Denumire Destinatie Tip Pret ID";
-	item1->setText(QString::fromStdString(text1));
-	this->lista_Oferte->addItem(item1);
-
-	int lineNumber = 0;
-	for (auto& oferta : lista_oferte)
-	{
-		QListWidgetItem* item = new QListWidgetItem;
-		string text = " " + oferta.denumire + " " + oferta.destinatie + " "
-			+ oferta.tip + " " + to_string(oferta.pret) + " " + to_string(oferta.id);
-		item->setText(QString::number(lineNumber) + QString::fromStdString(text));
-		this->lista_Oferte->addItem(item);
-	}*/
+	model->setOfterte(lista_oferte);
 }
 
 void console::connectSignalsSlots() {
@@ -512,15 +489,26 @@ void console::connectSignalsSlots() {
 
 	QObject::connect(UNDO, &QPushButton::clicked, [&]() {
 		this->srv.Undo();
+		this->reloadList(srv.get_list());
 		});
 
-	QObject::connect(tableOferte, &QTableWidget::itemPressed, [&]() {
-		int r = tableOferte->currentRow();
+	QObject::connect(tblV->selectionModel(), &QItemSelectionModel::selectionChanged, [&]() {
+		if (tblV->selectionModel()->selectedIndexes().isEmpty())
+		{
+			return;
+		}
+		
+		int r = tblV->selectionModel()->selectedIndexes().at(0).row();
+		auto cellInd0 = tblV->model()->index(r, 0);
+		auto cellInd1 = tblV->model()->index(r, 1);
+		auto cellInd2 = tblV->model()->index(r, 2);
+		auto cellInd3 = tblV->model()->index(r, 3);
+		//auto cellInd4 = tblV->model()->index(r, 4);
 
-		editDenumire->setText(tableOferte->item(r, 0)->text());
-		editDestinatie->setText(tableOferte->item(r, 1)->text());
-		editTip->setText(tableOferte->item(r, 2)->text());
-		editPret->setText(tableOferte->item(r, 3)->text());
+		editDenumire->setText(tblV->model()->data(cellInd0, Qt::DisplayRole).toString());
+		editDestinatie->setText(tblV->model()->data(cellInd1, Qt::DisplayRole).toString());
+		editTip->setText(tblV->model()->data(cellInd2, Qt::DisplayRole).toString());
+		editPret->setText(tblV->model()->data(cellInd3, Qt::DisplayRole).toString());
 		});
 }
 

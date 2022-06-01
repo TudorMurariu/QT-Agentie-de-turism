@@ -1,5 +1,5 @@
 #include "wishlist_Repo.h"
-
+#include "Oferta.h"
 void wish_list::goleste_cos() noexcept {
 	this->Lista.clear();
 }
