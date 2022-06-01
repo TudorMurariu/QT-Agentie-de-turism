@@ -22,7 +22,7 @@ Cos::Cos(Service& s) : srv(s)
 	//model = new MyListModel(srv.get_list());
 	model = new QStringListModel(this);
 	QStringList l;
-	l << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID";
+	l << "Denumire Destinatie Tip Pret ID";
 	model->setStringList(l);
 	lstV->setModel(model);
 	lstV->setUniformItemSizes(true);
@@ -163,8 +163,12 @@ void Cos::reloadList(vector<Oferta> lista_oferte) {
 	this->notify();
 	
 	QStringList l;
-	l << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID" << "\n";
-
+	l << "Denumire Destinatie Tip Pret ID";
+	for (auto& x : lista_oferte)
+	{
+		l << QString::fromStdString(x.denumire + " " + x.destinatie + " " + x.tip + " " + to_string(x.pret) + " " + to_string(x.id));
+	}
+	model->setStringList(l);
 }
 
 sterge_oferta_UI::sterge_oferta_UI(Service& s) : srv(s) {}
