@@ -21,6 +21,7 @@
 #include "Service.h"
 #include "oberver.h"
 #include <qpainter.h>
+#include <qstringlistmodel.h>
 #include "ViewStuff.h"
 
 class CosReadOnlyGUI;
@@ -52,8 +53,9 @@ private:
 	QLabel* lExport = new QLabel("Nume fisier : ");
 
 	//QTableWidget* tableOferte;
-	QListWidget* lista_Oferte;
-	//QListView* lstV;
+	//QListWidget* lista_Oferte;
+	QListView* lstV = new QListView;
+	QStringListModel* model;
 	//QTableView* tblV = new QTableView;
 
 public:

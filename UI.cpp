@@ -19,7 +19,13 @@ console::console(Service& s) : srv(s) {
 
 Cos::Cos(Service& s) : srv(s) 
 {
-
+	//model = new MyListModel(srv.get_list());
+	model = new QStringListModel(this);
+	QStringList l;
+	l << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID";
+	model->setStringList(l);
+	lstV->setModel(model);
+	lstV->setUniformItemSizes(true);
 }
 
 void Cos::build_UI()
@@ -105,8 +111,7 @@ void Cos::build_UI()
 	//tblHeaderList << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID";
 	//this->tableOferte->setHorizontalHeaderLabels(tblHeaderList);
 
-	lista_Oferte = new QListWidget;
-	vlnew->addWidget(lista_Oferte);
+	vlnew->addWidget(lstV);
 
 	mainL->addWidget(stanga);
 	mainL->addWidget(dreapta);
@@ -152,43 +157,14 @@ void Cos::connectSignalsSlots()
 	QObject::connect(Reload, &QPushButton::clicked, [&]() {
 		this->reloadList(srv.get_cos());
 		});
-
-	/*QObject::connect(lista_Oferte, &QListWidget::currentTextChanged, [&]() {
-
-		});*/
 }
 
 void Cos::reloadList(vector<Oferta> lista_oferte) {
 	this->notify();
-	this->lista_Oferte->clear();
+	
+	QStringList l;
+	l << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID" << "\n";
 
-	QListWidgetItem* item1 = new QListWidgetItem;
-	string text1 = "  Denumire Destinatie Tip Pret ID";
-	item1->setText(QString::fromStdString(text1));
-	this->lista_Oferte->addItem(item1);
-
-	int lineNumber = 0;
-	for (auto& oferta : lista_oferte)
-	{
-		QListWidgetItem* item = new QListWidgetItem;
-		string text = " " + oferta.denumire + " " + oferta.destinatie + " "
-			+ oferta.tip + " " + to_string(oferta.pret) + " " + to_string(oferta.id);
-		item->setText(QString::number(lineNumber) + QString::fromStdString(text));
-		this->lista_Oferte->addItem(item);
-	}
-
-	/*this->tableOferte->clearContents();
-	this->tableOferte->setRowCount(lista_oferte.size());
-
-	int lineNumber = 0;
-	for (auto& oferta : lista_oferte) {
-		this->tableOferte->setItem(lineNumber, 0, new QTableWidgetItem(QString::fromStdString(oferta.denumire)));
-		this->tableOferte->setItem(lineNumber, 1, new QTableWidgetItem(QString::fromStdString(oferta.destinatie)));
-		this->tableOferte->setItem(lineNumber, 2, new QTableWidgetItem(QString::fromStdString(oferta.tip)));
-		this->tableOferte->setItem(lineNumber, 3, new QTableWidgetItem(QString::number(oferta.pret)));
-		this->tableOferte->setItem(lineNumber, 4, new QTableWidgetItem(QString::number(oferta.id)));
-		lineNumber++;
-	}*/
 }
 
 sterge_oferta_UI::sterge_oferta_UI(Service& s) : srv(s) {}
@@ -393,8 +369,8 @@ void console ::build_UI()
 	//this->tableOferte = new QTableWidget{ noLines, noColumns }; 
 
 	//setam header-ul tabelului
-	QStringList tblHeaderList;
-	tblHeaderList << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID";
+	/*QStringList tblHeaderList;
+	tblHeaderList << "Denumire" << "Destinatie" << "Tip" << "Pret" << "ID";*/
 	//this->tableOferte->setHorizontalHeaderLabels(tblHeaderList);
 
 	//optiune pentru a se redimensiona celulele din tabel in functie de continut

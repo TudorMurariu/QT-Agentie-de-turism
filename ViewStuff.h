@@ -57,27 +57,42 @@ public:
 };
 
 
-class MyListModel : public QAbstractTableModel {
-	std::vector<Oferta> oferte;
-public:
-	MyListModel(const std::vector<Oferta>& oferte) : oferte{ oferte } {
-	}
-
-	int rowCount(const QModelIndex& parent = QModelIndex()) const override {
-		return oferte.size();
-	}
-
-	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override {
-		/*if (role == Qt::DisplayRole) {
-			qDebug() << "get row:" << index.row();
-			auto sp = oferte[index.row()].getSpecies();
-			return QString::fromStdString(sp);
-		}
-		if (role == Qt::UserRole) {
-			auto tp = oferte[index.row()].getType();
-			return QString::fromStdString(tp);
-		}*/
-
-		return QVariant{};
-	}
-};
+//class MyListModel : public QAbstractTableModel {
+//	std::vector<Oferta> oferte;
+//public:
+//	MyListModel(const std::vector<Oferta>& oferte) : oferte{ oferte } {
+//	}
+//
+//	int rowCount(const QModelIndex& parent = QModelIndex()) const override {
+//		return oferte.size();
+//	}
+//
+//	int columnCount(const QModelIndex& parent = QModelIndex()) const override {
+//		return 1;
+//	}
+//
+//	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override {
+//		/*if (role == Qt::DisplayRole) {
+//			qDebug() << "get row:" << index.row();
+//			auto sp = oferte[index.row()].getSpecies();
+//			return QString::fromStdString(sp);
+//		}
+//		if (role == Qt::UserRole) {
+//			auto tp = oferte[index.row()].getType();
+//			return QString::fromStdString(tp);
+//		}*/
+//
+//		return QVariant{};
+//	}
+//
+//	void setOfterte(const vector<Oferta>& oferte) {
+//		this->oferte = oferte;
+//		auto topLeft = createIndex(0, 0);
+//		auto bottomR = createIndex(rowCount(), columnCount());
+//		emit dataChanged(topLeft, bottomR);
+//		QModelIndex bottomRight1 = createIndex(0, 0);
+//		QModelIndex topLeft1 = createIndex(rowCount(), columnCount());
+//		emit dataChanged(bottomRight1, topLeft1);
+//		emit layoutChanged();
+//	}
+//};
