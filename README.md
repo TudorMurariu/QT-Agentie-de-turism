@@ -9,3 +9,9 @@ Take a look at the UI :
 
 We can filter or sort our offers by different properties:
 ![image](https://user-images.githubusercontent.com/30391543/222967278-6a38f1dc-1955-446a-bdfe-ca59df69c495.png)
+
+The app also contains an wishlist.
+![image](https://user-images.githubusercontent.com/30391543/222967605-b280992e-d9db-4db9-8f34-d137e461ca2c.png)
+In the wishlist we have the option to add a number of random items. 
+For this functionality I used the prebuilt shuffle in C++:
+![image](https://user-images.githubusercontent.com/30391543/222967760-cbe44a94-c343-4189-b17a-f8f59f2a2859.png)
