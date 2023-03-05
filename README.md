@@ -15,3 +15,12 @@ The app also contains an wishlist.
 In the wishlist we have the option to add a number of random items. 
 For this functionality I used the prebuilt shuffle in C++:
 ![image](https://user-images.githubusercontent.com/30391543/222967760-cbe44a94-c343-4189-b17a-f8f59f2a2859.png)
+
+We can also export the wishlist into an html file (with a chosen name) by pressing this button:
+![image](https://user-images.githubusercontent.com/30391543/222968053-9c4f65db-8a6c-49c2-819a-a3a8c5622ca7.png)
+
+The html has a 50% chance to have the itmes listed in a table:
+![image](https://user-images.githubusercontent.com/30391543/222968234-6f34e0d5-8603-4aeb-8bd1-64f0e34577ee.png)
+
+And a 50% chance to have them as a list:
+![image](https://user-images.githubusercontent.com/30391543/222968183-18bc6a11-d750-4bb7-bb20-f38180147dba.png)
